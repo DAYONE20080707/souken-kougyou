@@ -1,125 +1,172 @@
-"use client"
+// components/header/Header_01
 
-import { useState } from "react"
-import Link from "next/link"
+"use client"
 import Image from "next/image"
+import Link from "next/link"
+import Sns from "../ui/button/SnsButton"
+import { useState, useEffect } from "react"
 import Menu from "@/components/ui/navigation/Menu"
-import Sns from "@/components/ui/button/SnsButton"
 import ContactButton from "@/components/ui/button/ContactButton"
 import CompanyInfo from "@/components/ui/navigation/CompanyInfo"
+import HeaderContent from "../ui/frame/HeaderContent"
 
-const Header_03 = () => {
-  // ハンバーガーメニューの開閉状態を管理するstate
-  const [MenuOpen, setMenuOpen] = useState(false)
-
-  // メニュー開閉のトグル関数
-  const toggleMenu = () => {
-    setMenuOpen(!MenuOpen)
-  }
-
+const Header_05 = () => {
   const { companyName } = CompanyInfo[0]
 
+  // スクロール状態とメニュー開閉状態を管理
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false) // メニュー開閉状態
+  const [isAnimating, setIsAnimating] = useState(false) // フェードアニメーション用状態
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50)
+    }
+
+    window.addEventListener("scroll", handleScroll)
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
+
+  const handleMenuToggle = () => {
+    if (isMenuOpen) {
+      setIsAnimating(true)
+      setTimeout(() => {
+        setIsMenuOpen(false)
+        setIsAnimating(false)
+      }, 200) // アニメーションの長さに合わせて調整
+    } else {
+      setIsMenuOpen(true)
+    }
+  }
+
+  const filteredMenu = Menu.filter((item) => item.name !== "お問い合わせ")
+
   return (
-    <header className=" md:border-r border-black w-full md:w-32 h-20 md:h-screen text-[#393939] tracking-wide py-6 bg-white fixed z-10 px-4 md:px-0 ">
-      <div className="h-full flex md:flex-col items-center justify-between ">
-        <div className="flex items-center">
-          <Link href="/" className="text-center ">
-            {CompanyInfo[0].companyName("tertiary")}
-          </Link>
-        </div>
-
-        {/* snsボタンSP */}
-        <div className="md:hidden md:border-t  border-borderGray md:w-3/4  md:pt-5">
-          <ul className="flex md:flex-col items-center font-semibold space-x-2">
-            {Sns.map((item, index) => (
-              <li
-                key={index}
-                className="w-5 h-5 md:w-[60px] md:h-[60px] flex items-center justify-center"
-              >
-                <Link href={item.href}>
-                  <Image
-                    src={item.src}
-                    alt={item.name}
-                    width={30}
-                    height={30}
-                  />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* ハンバーガーメニューボタン */}
-        <div
-          className="w-10 md:w-20 h-20 flex items-center ustify-end md:justify-center cursor-pointer"
-          onClick={toggleMenu}
-        >
-          <Image
-            src="/common/Menu.png"
-            alt="メニューボタン"
-            width={38}
-            height={38}
-          />
-        </div>
-
-        {/* SNSボタン */}
-        <div className="hidden md:block  md:border-t  border-borderGray md:w-3/4 pl-2 md:pl-0 md:pt-5">
-          <ul className="flex md:flex-col items-center font-semibold space-x-1">
-            {Sns.map((item, index) => (
-              <li
-                key={index}
-                className="w-5 h-5 md:w-[60px] md:h-[60px] flex items-center justify-center"
-              >
-                <Link href={item.href}>
-                  <Image
-                    src={item.src}
-                    alt={item.name}
-                    width={30}
-                    height={30}
-                  />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      {/* ハンバーガーメニュー */}
-      <div
-        className={`fixed z-10 top-0 right-0 h-screen w-full md:w-[500px] bg-bgBlack text-white shadow-lg transform transition-transform duration-300 ${
-          MenuOpen ? "translate-x-0" : "translate-x-full"
+    <>
+      <HeaderContent
+        className={`w-full h-10 text-white fixed top-0 left-1/2 transform -translate-x-1/2 z-10  transition-all duration-300   ${
+          isScrolled ? "!bg-gray-800 !bg-opacity-30" : " bg-opacity-0"
         }`}
       >
-        {/* 閉じるボタン */}
-        <div className="flex justify-end p-4">
-          <button
-            aria-label="メニューを閉じる"
-            onClick={toggleMenu}
-            className="w-10 h-10"
-          >
-            <div className="w-[38px] h-[38px] relative">
-              <div className="w-[53.74px] bg-white h-[1px] left-0 top-0 absolute origin-top-left rotate-45 border border-white"></div>
-              <div className="w-[53.74px] bg-white h-[1px] left-[38px] top-0 absolute origin-top-left rotate-[135deg] border border-white"></div>
+        <nav className="w-full h-20 mx-auto  px-4 flex items-center justify-between md:justify-start  ">
+          {/* ロゴ */}
+          <Link href="/" className="w-[150px] md:w-[200px]">
+            <div className="text-lg font-bold ">
+              {CompanyInfo[0].companyName("primary")}
             </div>
-          </button>
-        </div>
+          </Link>
 
-        {/* メニューアイテム */}
-        <ul className="flex flex-col items-center space-y-6 mb-16">
-          {Menu.map((item, index) => (
-            <li key={index}>
-              <Link href={item.href} className="text-lg font-semibold">
-                {item.name}
-              </Link>
+          {/* デスクトップ用メニュー */}
+          <ul className="  hidden md:flex  items-center space-x-10 ml-auto">
+            {filteredMenu.map((item, index) => (
+              <li key={index}>
+                <Link href={item.href}>
+                  <div>{item.name}</div>
+                </Link>
+              </li>
+            ))}
+            {Sns.map((item, index) => (
+              <li
+                key={index}
+                className="-5 h-5 md:w-[60px] md:h-[60px] flex items-center justify-center"
+              >
+                <Link href={item.href}>
+                  <Image
+                    src={item.src}
+                    alt={item.name}
+                    width={30}
+                    height={30}
+                  />
+                </Link>
+              </li>
+            ))}
+            <li>
+              <ContactButton className=" md:!w-auto h-[60px] rounded-full" />
             </li>
-          ))}
-        </ul>
-        <div className="flex justify-center items-center w-[260px] mx-auto">
-          <ContactButton className="h-[72px]" />
-        </div>
-      </div>
-    </header>
+          </ul>
+
+          {/* ハンバーガーメニューボタン */}
+          <button
+            className={`block md:hidden text-white transition-transform duration-300 ${
+              isMenuOpen ? "rotate-90" : "rotate-0"
+            }`}
+            onClick={handleMenuToggle}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1"
+                stroke="currentColor"
+                className="w-8 h-8"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1"
+                stroke="currentColor"
+                className="w-8 h-8"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
+              </svg>
+            )}
+          </button>
+        </nav>
+
+        {/* スマホ用メニュー */}
+        <nav
+          className={`absolute top-20 left-0 w-full h-screen bg-gray-800 bg-opacity-70 text-white md:hidden transition-opacity duration-300 ${
+            isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          } ${isAnimating ? "pointer-events-auto" : ""}`}
+        >
+          <ul className="flex flex-col items-center space-y-6 py-10">
+            {filteredMenu.map((item, index) => (
+              <li key={index}>
+                <Link href={item.href}>
+                  <div onClick={handleMenuToggle}>{item.name}</div>
+                </Link>
+              </li>
+            ))}
+             {Sns.map((item, index) => (
+              <li
+                key={index}
+                className="-5 h-5 md:w-[60px] md:h-[60px] flex items-center justify-center"
+              >
+                <Link href={item.href}>
+                  <Image
+                    src={item.src}
+                    alt={item.name}
+                    width={30}
+                    height={30}
+                  />
+                </Link>
+              </li>
+            ))}
+            {/* ContactButton */}
+            <li>
+              <ContactButton className="w-full py-4 font-normal" />
+            </li>
+          </ul>
+        </nav>
+      </HeaderContent>
+    </>
   )
 }
 
-export default Header_03
+export default Header_05

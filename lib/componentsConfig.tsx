@@ -139,7 +139,7 @@ export const componentsConfig: ComponentsConfig = {
           About_04: <About_04 />,
         },
       },
-      
+
       // message: {
       //   title: "メッセージ",
       //   options: [
@@ -247,7 +247,6 @@ export const componentsConfig: ComponentsConfig = {
         components: {
           Flow_01: <Flow_01 />,
           Flow_02: <Flow_02 />,
-
         },
       },
       news: {
@@ -278,11 +277,9 @@ export const componentsConfig: ComponentsConfig = {
         components: {
           Faq_01: <Faq_01 />,
           Faq_02: <Faq_02 />,
-
         },
       },
-      
-      
+
       aside: {
         title: "ASIDE",
         options: [
@@ -307,7 +304,6 @@ export const componentsConfig: ComponentsConfig = {
           Profile_02: <Profile_02 />,
           Profile_03: <Profile_03 />,
           Profile_04: <Profile_04 />,
-
         },
       },
       cta: {
